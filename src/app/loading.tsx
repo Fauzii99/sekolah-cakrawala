@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="section"><div className="container"><p className="eyebrow">Memuat halaman…</p></div></main>}

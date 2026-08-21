@@ -1,0 +1,1 @@
+import type{MetadataRoute}from"next";import{news}from"@/lib/data";export default function sitemap():MetadataRoute.Sitemap{const b="https://sekolah-cakrawala.vercel.app";return[{url:b},{url:`${b}/ppdb`},...news.map(n=>({url:`${b}/berita/${n.slug}`}))]}
