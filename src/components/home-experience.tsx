@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowDown, ArrowRight, FlaskConical, Globe2, Quote, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { news } from "@/lib/data";
@@ -47,12 +47,18 @@ const newsImages = ["https://images.unsplash.com/photo-1567427017947-545c5f8d16a
 
 export function HomeExperience() {
   const reduced = useReducedMotion();
+  const { scrollYProgress, scrollY } = useScroll();
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: .25 });
+  const heroCopyY = useTransform(scrollY, [0, 800], [0, reduced ? 0 : 150]);
+  const heroCopyOpacity = useTransform(scrollY, [0, 620], [1, reduced ? 1 : .16]);
+  const heroImageY = useTransform(scrollY, [0, 900], [0, reduced ? 0 : 120]);
   return <main>
+    <motion.div className="scroll-progress" style={{ scaleX: smoothProgress }} aria-hidden="true" />
     <section className="hero-editorial">
-      <motion.div className="hero-image" initial={false} animate={reduced ? {} : { scale: [1, 1.07] }} transition={{ duration: 18, ease: "linear", repeat: Infinity, repeatType: "reverse" }} />
+      <motion.div className="hero-image" style={{ y: heroImageY }} initial={false} animate={reduced ? {} : { scale: [1.02, 1.09] }} transition={{ duration: 18, ease: "linear", repeat: Infinity, repeatType: "reverse" }} />
       <div className="hero-shade" />
       <div className="hero-grid container">
-        <motion.div className="hero-copy" initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: reduced ? 0 : .14, delayChildren: .2 } } }}>
+        <motion.div className="hero-copy" style={{ y: heroCopyY, opacity: heroCopyOpacity }} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: reduced ? 0 : .14, delayChildren: .2 } } }}>
           <motion.span className="hero-kicker" variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>SMA Cakrawala Nusantara · Bandung</motion.span>
           <motion.h1 variants={{ hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0 } }}>Berpikir luas.<br/><em>Berakar kuat.</em></motion.h1>
           <motion.p variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } }}>Ruang tumbuh bagi generasi yang ingin memahami dunia—lalu berani mengubahnya.</motion.p>
@@ -76,7 +82,7 @@ export function HomeExperience() {
 
     <section id="program" className="programs section-pad"><div className="container">
       <Reveal className="section-heading"><span className="section-index">02 / PROGRAM UNGGULAN</span><h2>Belajar melampaui<br/><em>batas ruang kelas.</em></h2></Reveal>
-      <div className="program-stack">{programs.map((p,i)=><Reveal key={p.title} className={`program-row row-${i}`}><div className="program-image" style={{backgroundImage:`url('${p.image}')`}}/><div className="program-copy"><div className="program-meta"><span>{p.no}</span><p.icon size={22}/></div><h3>{p.title}</h3><p>{p.copy}</p><a href="#kontak" aria-label={`Pelajari ${p.title}`}><ArrowRight/></a></div></Reveal>)}</div>
+      <div className="program-stack">{programs.map((p,i)=><Reveal key={p.title} className={`program-row row-${i}`}><motion.div className="program-image" whileHover={reduced?{}:{scale:1.025}} transition={{duration:.55}} style={{backgroundImage:`url('${p.image}')`}}/><div className="program-copy"><div className="program-meta"><span>{p.no}</span><p.icon size={22}/></div><h3>{p.title}</h3><p>{p.copy}</p><a href="#kontak" aria-label={`Pelajari ${p.title}`}><ArrowRight/></a></div></Reveal>)}</div>
     </div></section>
 
     <section className="feature-story"><div className="feature-photo"/><div className="feature-copy"><Reveal><span className="section-index light-index">CERITA DARI CAKRAWALA</span><p className="feature-quote">“Kami belajar bahwa ide kecil bisa punya dampak besar ketika dikerjakan bersama.”</p><p>Tim Arunika mengubah limbah kantin menjadi material bioplastik—proyek satu semester yang membawa mereka ke final kompetisi inovasi nasional.</p><Link className="button outline-light" href="/berita/pekan-proyek-siswa">Baca perjalanan mereka <ArrowRight size={18}/></Link></Reveal></div></section>
