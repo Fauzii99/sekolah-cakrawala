@@ -34,8 +34,8 @@ export function Counter({ value, suffix = "" }: { value: number; suffix?: string
 
 const programs = [
   { no: "01", title: "IPA", copy: "Pembelajaran biologi, fisika, dan kimia berbasis eksperimen untuk melatih observasi, penalaran ilmiah, serta pemecahan masalah nyata.", icon: FlaskConical, image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1400&q=85" },
-  { no: "02", title: "IPS", copy: "Kajian ekonomi, geografi, sosiologi, dan sejarah yang membantu siswa memahami masyarakat serta mengambil keputusan berbasis data.", icon: Globe2, image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85" },
-  { no: "03", title: "Matematika", copy: "Pendalaman logika, numerasi, statistika, dan pemodelan untuk membangun cara berpikir terstruktur, akurat, dan adaptif.", icon: Sparkles, image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=85" },
+  { no: "02", title: "IPS", copy: "Kajian ekonomi, geografi, sosiologi, dan sejarah yang membantu siswa memahami masyarakat serta mengambil keputusan berbasis data.", icon: Globe2, image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1400&q=85" },
+  { no: "03", title: "Matematika", copy: "Pendalaman logika, numerasi, statistika, dan pemodelan untuk membangun cara berpikir terstruktur, akurat, dan adaptif.", icon: Sparkles, image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1400&q=85" },
 ];
 const facilities = [
   ["Laboratorium Terpadu", "Eksperimen tanpa batas disiplin", "https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&w=1300&q=85"],
@@ -81,11 +81,11 @@ export function HomeExperience() {
     </div></section>
 
     <section id="program" className="programs section-pad"><div className="container">
-      <Reveal className="section-heading"><span className="section-index">02 / PROGRAM UNGGULAN</span><h2>Belajar melampaui<br/><em>batas ruang kelas.</em></h2></Reveal>
+      <Reveal className="section-heading"><span className="section-index">02 / JURUSAN</span><h2>Pilih arah belajar.<br/><em>Temukan masa depan.</em></h2></Reveal>
       <div className="program-stack">{programs.map((p,i)=><Reveal key={p.title} className={`program-row row-${i}`}><motion.div className="program-image" whileHover={reduced?{}:{scale:1.025}} transition={{duration:.55}} style={{backgroundImage:`url('${p.image}')`}}/><div className="program-copy"><div className="program-meta"><span>{p.no}</span><p.icon size={22}/></div><h3>{p.title}</h3><p>{p.copy}</p><a href="#kontak" aria-label={`Pelajari ${p.title}`}><ArrowRight/></a></div></Reveal>)}</div>
     </div></section>
 
-    <section className="feature-story"><div className="feature-photo"/><div className="feature-copy"><Reveal><span className="section-index light-index">CERITA DARI CAKRAWALA</span><p className="feature-quote">“Kami belajar bahwa ide kecil bisa punya dampak besar ketika dikerjakan bersama.”</p><p>Tim Arunika mengubah limbah kantin menjadi material bioplastik—proyek satu semester yang membawa mereka ke final kompetisi inovasi nasional.</p><Link className="button outline-light" href="/berita/pekan-proyek-siswa">Baca perjalanan mereka <ArrowRight size={18}/></Link></Reveal></div></section>
+    <section className="feature-story"><div className="feature-photo laboratory-photo"/><div className="feature-copy"><Reveal><span className="section-index light-index">CERITA DARI CAKRAWALA</span><p className="feature-quote">“Kami belajar bahwa ide kecil bisa punya dampak besar ketika dikerjakan bersama.”</p><p>Tim Arunika mengubah limbah kantin menjadi material bioplastik—proyek satu semester yang membawa mereka ke final kompetisi inovasi nasional.</p><Link className="button outline-light" href="/berita/pekan-proyek-siswa">Baca perjalanan mereka <ArrowRight size={18}/></Link></Reveal></div></section>
 
     <section className="facility-section section-pad"><div className="container facility-head"><Reveal><span className="section-index">03 / RUANG TUMBUH</span><h2>Kampus untuk <em>mencoba.</em></h2></Reveal><Reveal><p>Dirancang untuk fokus, kolaborasi, dan kemungkinan baru.</p></Reveal></div><div className="facility-track">{facilities.map((f,i)=><Reveal className="facility-card" key={f[0]}><div className="facility-img" style={{backgroundImage:`url('${f[2]}')`}}><span>0{i+1}</span></div><h3>{f[0]}</h3><p>{f[1]}</p></Reveal>)}</div></section>
 

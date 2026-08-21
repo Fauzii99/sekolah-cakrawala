@@ -17,6 +17,6 @@ export function Header({ home = false }: { home?: boolean }) {
   return <header className={`site-header ${solid ? "is-solid" : "is-clear"}`}><nav className="nav-shell" aria-label="Navigasi utama">
     <Link href="/" className="brand"><span className="brand-mark brand-logo"><Image src="/images/logo-umri.jpg" alt="Logo Universitas Muhammadiyah Riau" width={52} height={53} priority /></span><span><b>CAKRAWALA</b><small>NUSANTARA</small></span></Link>
     <button className="menu-button" aria-label={open ? "Tutup menu" : "Buka menu"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X/> : <Menu/>}</button>
-    <div className={`nav-links ${open ? "open" : ""}`}><Link onClick={()=>setOpen(false)} href="/#cerita">Tentang</Link><Link onClick={()=>setOpen(false)} href="/#program">Program</Link><Link onClick={()=>setOpen(false)} href="/#berita">Jurnal</Link><Link onClick={()=>setOpen(false)} href="/#kontak">Kontak</Link><Link onClick={()=>setOpen(false)} className="nav-ppdb" href="/ppdb">PPDB 2026 <span>↗</span></Link></div>
+    <div className={`nav-links ${open ? "open" : ""}`}><Link onClick={()=>setOpen(false)} href="/#cerita">Tentang</Link><Link onClick={()=>setOpen(false)} href="/#program">Jurusan</Link><Link onClick={()=>setOpen(false)} href="/#berita">Jurnal</Link><Link onClick={()=>setOpen(false)} href="/#kontak">Kontak</Link><Link onClick={()=>setOpen(false)} className="nav-ppdb" href="/ppdb">PPDB 2026 <span>↗</span></Link></div>
   </nav></header>;
 }
