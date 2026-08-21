@@ -33,9 +33,9 @@ export function Counter({ value, suffix = "" }: { value: number; suffix?: string
 }
 
 const programs = [
-  { no: "01", title: "Cakrawala STEM", copy: "Sains bukan hafalan. Siswa merancang, menguji, gagal, lalu menemukan jawaban lewat proyek yang dekat dengan hidup.", icon: FlaskConical, image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1400&q=85" },
-  { no: "02", title: "Global Communication", copy: "Bahasa, public speaking, dan kolaborasi lintas budaya membangun keberanian membawa gagasan ke panggung dunia.", icon: Globe2, image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85" },
-  { no: "03", title: "Leadership & Character", copy: "Mentoring personal dan proyek sosial menumbuhkan pemimpin yang peka, tangguh, dan bertanggung jawab.", icon: Sparkles, image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=85" },
+  { no: "01", title: "IPA", copy: "Pembelajaran biologi, fisika, dan kimia berbasis eksperimen untuk melatih observasi, penalaran ilmiah, serta pemecahan masalah nyata.", icon: FlaskConical, image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1400&q=85" },
+  { no: "02", title: "IPS", copy: "Kajian ekonomi, geografi, sosiologi, dan sejarah yang membantu siswa memahami masyarakat serta mengambil keputusan berbasis data.", icon: Globe2, image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85" },
+  { no: "03", title: "Matematika", copy: "Pendalaman logika, numerasi, statistika, dan pemodelan untuk membangun cara berpikir terstruktur, akurat, dan adaptif.", icon: Sparkles, image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=85" },
 ];
 const facilities = [
   ["Laboratorium Terpadu", "Eksperimen tanpa batas disiplin", "https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&w=1300&q=85"],
