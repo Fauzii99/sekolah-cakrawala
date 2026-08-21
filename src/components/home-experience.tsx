@@ -1,0 +1,92 @@
+"use client";
+
+import Link from "next/link";
+import { motion, useInView, useReducedMotion } from "motion/react";
+import { ArrowDown, ArrowRight, FlaskConical, Globe2, Quote, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { news } from "@/lib/data";
+
+export function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const reduced = useReducedMotion();
+  return <motion.div className={className} initial={reduced ? false : { y: 18, filter: "blur(3px)" }} whileInView={{ y: 0, filter: "blur(0px)" }} viewport={{ once: true, amount: .05 }} transition={{ duration: .5, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>;
+}
+
+export function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const seen = useInView(ref, { once: true });
+  const reduced = useReducedMotion();
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!seen) return;
+    if (reduced) return;
+    let frame = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / 1400, 1);
+      setCount(Math.round(value * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [seen, reduced, value]);
+  return <span ref={ref}>{(reduced ? value : count).toLocaleString("id-ID")}{suffix}</span>;
+}
+
+const programs = [
+  { no: "01", title: "Cakrawala STEM", copy: "Sains bukan hafalan. Siswa merancang, menguji, gagal, lalu menemukan jawaban lewat proyek yang dekat dengan hidup.", icon: FlaskConical, image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1400&q=85" },
+  { no: "02", title: "Global Communication", copy: "Bahasa, public speaking, dan kolaborasi lintas budaya membangun keberanian membawa gagasan ke panggung dunia.", icon: Globe2, image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85" },
+  { no: "03", title: "Leadership & Character", copy: "Mentoring personal dan proyek sosial menumbuhkan pemimpin yang peka, tangguh, dan bertanggung jawab.", icon: Sparkles, image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1400&q=85" },
+];
+const facilities = [
+  ["Laboratorium Terpadu", "Eksperimen tanpa batas disiplin", "https://images.unsplash.com/photo-1564981797816-1043664bf78d?auto=format&fit=crop&w=1300&q=85"],
+  ["Perpustakaan Kolaboratif", "22.000 koleksi, ruang sunyi dan diskusi", "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1300&q=85"],
+  ["Creative Studio", "Ruang produksi visual, audio, dan desain", "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1300&q=85"],
+  ["Arena Cakrawala", "Gerak, strategi, dan sportivitas", "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1300&q=85"],
+];
+const newsImages = ["https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1200&q=85", "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1000&q=85", "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=1000&q=85"];
+
+export function HomeExperience() {
+  const reduced = useReducedMotion();
+  return <main>
+    <section className="hero-editorial">
+      <motion.div className="hero-image" initial={false} animate={reduced ? {} : { scale: [1, 1.07] }} transition={{ duration: 18, ease: "linear", repeat: Infinity, repeatType: "reverse" }} />
+      <div className="hero-shade" />
+      <div className="hero-grid container">
+        <motion.div className="hero-copy" initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: reduced ? 0 : .14, delayChildren: .2 } } }}>
+          <motion.span className="hero-kicker" variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>SMA Cakrawala Nusantara · Bandung</motion.span>
+          <motion.h1 variants={{ hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0 } }}>Berpikir luas.<br/><em>Berakar kuat.</em></motion.h1>
+          <motion.p variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } }}>Ruang tumbuh bagi generasi yang ingin memahami dunia—lalu berani mengubahnya.</motion.p>
+          <motion.div className="hero-actions" variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}><Link className="button lime" href="/ppdb">Mulai perjalanan <ArrowRight size={18}/></Link><a className="text-link light" href="#cerita">Kenali Cakrawala</a></motion.div>
+        </motion.div>
+        <motion.aside className="hero-float-stat" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .9, duration: .8 }}><span>Jejak alumni</span><strong>98%</strong><p>diterima di perguruan tinggi pilihan</p></motion.aside>
+        <div className="hero-label">EST. 1998 <span/> 6°52&apos; S · 107°37&apos; E</div>
+        <a href="#cerita" className="scroll-cue"><span>Gulir untuk menjelajah</span><ArrowDown size={18}/></a>
+      </div>
+    </section>
+
+    <section id="cerita" className="intro section-pad"><div className="container intro-layout">
+      <Reveal><span className="section-index">01 / CAKRAWALA</span></Reveal>
+      <Reveal delay={.1}><h2>Pendidikan terbaik tidak memberi semua jawaban. Ia menyalakan <em>rasa ingin tahu</em> yang bertahan seumur hidup.</h2></Reveal>
+      <Reveal className="intro-note" delay={.2}><p>Sejak 1998, kami memadukan ketajaman akademik, integritas, dan pengalaman nyata. Setiap siswa dikenal, didengar, dan ditantang menemukan perannya.</p><a href="#program" className="text-link">Baca filosofi kami <ArrowRight size={16}/></a></Reveal>
+    </div></section>
+
+    <section className="numbers"><div className="container number-grid">
+      {[[1240,"Siswa aktif",""],[86,"Pendidik & mentor",""],[32,"Program prestasi",""],[98,"Alumni lanjut studi","%"]].map(([v,l,s],i)=><Reveal className="number-item" delay={i*.08} key={String(l)}><strong><Counter value={Number(v)} suffix={String(s)}/></strong><span>{l}</span></Reveal>)}
+    </div></section>
+
+    <section id="program" className="programs section-pad"><div className="container">
+      <Reveal className="section-heading"><span className="section-index">02 / PROGRAM UNGGULAN</span><h2>Belajar melampaui<br/><em>batas ruang kelas.</em></h2></Reveal>
+      <div className="program-stack">{programs.map((p,i)=><Reveal key={p.title} className={`program-row row-${i}`}><div className="program-image" style={{backgroundImage:`url('${p.image}')`}}/><div className="program-copy"><div className="program-meta"><span>{p.no}</span><p.icon size={22}/></div><h3>{p.title}</h3><p>{p.copy}</p><a href="#kontak" aria-label={`Pelajari ${p.title}`}><ArrowRight/></a></div></Reveal>)}</div>
+    </div></section>
+
+    <section className="feature-story"><div className="feature-photo"/><div className="feature-copy"><Reveal><span className="section-index light-index">CERITA DARI CAKRAWALA</span><p className="feature-quote">“Kami belajar bahwa ide kecil bisa punya dampak besar ketika dikerjakan bersama.”</p><p>Tim Arunika mengubah limbah kantin menjadi material bioplastik—proyek satu semester yang membawa mereka ke final kompetisi inovasi nasional.</p><Link className="button outline-light" href="/berita/pekan-proyek-siswa">Baca perjalanan mereka <ArrowRight size={18}/></Link></Reveal></div></section>
+
+    <section className="facility-section section-pad"><div className="container facility-head"><Reveal><span className="section-index">03 / RUANG TUMBUH</span><h2>Kampus untuk <em>mencoba.</em></h2></Reveal><Reveal><p>Dirancang untuk fokus, kolaborasi, dan kemungkinan baru.</p></Reveal></div><div className="facility-track">{facilities.map((f,i)=><Reveal className="facility-card" key={f[0]}><div className="facility-img" style={{backgroundImage:`url('${f[2]}')`}}><span>0{i+1}</span></div><h3>{f[0]}</h3><p>{f[1]}</p></Reveal>)}</div></section>
+
+    <section id="berita" className="news section-pad"><div className="container"><Reveal className="news-head"><div><span className="section-index">04 / JURNAL SEKOLAH</span><h2>Yang sedang<br/><em>kami rayakan.</em></h2></div><a className="text-link" href="#berita">Lihat semua kabar <ArrowRight size={16}/></a></Reveal><div className="news-grid">{news.map((n,i)=><Reveal className={`news-item news-${i}`} key={n.slug}><Link href={`/berita/${n.slug}`}><div className="news-img" style={{backgroundImage:`url('${newsImages[i]}')`}}/><span>{n.date} · {i===0?"PRESTASI":i===1?"INOVASI":"AGENDA"}</span><h3>{n.title}</h3><p>{n.text}</p><ArrowRight/></Link></Reveal>)}</div></div></section>
+
+    <section className="testimonial section-pad"><div className="container testimonial-layout"><Quote size={64}/><Reveal><blockquote>“Di sini, anak kami tidak diminta menjadi sama dengan yang lain. Ia dibantu mengenali kekuatannya, berani bertanya, dan bertanggung jawab atas pilihannya.”</blockquote><p><strong>Rina Prameswari</strong><br/>Orang tua siswa kelas XI</p></Reveal><div className="testimonial-photo"/></div></section>
+
+    <section id="kontak" className="ppdb-cta"><div className="container cta-layout"><Reveal><span className="section-index light-index">PPDB 2026 / 2027</span><h2>Cakrawala berikutnya<br/>dimulai <em>di sini.</em></h2></Reveal><Reveal className="cta-side"><p>Pendaftaran gelombang pertama dibuka. Temukan lingkungan belajar yang tepat untuk langkah besar berikutnya.</p><Link className="button lime" href="/ppdb">Daftar PPDB sekarang <ArrowRight size={18}/></Link><span>Butuh bantuan? (022) 555-0188</span></Reveal></div></section>
+  </main>;
+}

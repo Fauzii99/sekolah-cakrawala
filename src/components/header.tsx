@@ -1,1 +1,21 @@
-import Link from"next/link";export function Header(){return <header><nav className="container nav" aria-label="Navigasi utama"><Link href="/" className="brand"><span className="mark">CN</span><span>SMA Cakrawala Nusantara</span></Link><div className="links"><Link href="/#profil">Profil</Link><Link href="/#program">Program</Link><Link href="/#berita">Berita</Link><Link href="/#kontak">Kontak</Link><Link className="btn primary" href="/ppdb">PPDB 2026</Link></div></nav></header>}
+"use client";
+
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+
+export function Header({ home = false }: { home?: boolean }) {
+  const [solid, setSolid] = useState(!home);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!home) return;
+    const onScroll = () => setSolid(window.scrollY > 40);
+    onScroll(); window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [home]);
+  return <header className={`site-header ${solid ? "is-solid" : "is-clear"}`}><nav className="nav-shell" aria-label="Navigasi utama">
+    <Link href="/" className="brand"><span className="brand-mark">CN</span><span><b>CAKRAWALA</b><small>NUSANTARA</small></span></Link>
+    <button className="menu-button" aria-label={open ? "Tutup menu" : "Buka menu"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X/> : <Menu/>}</button>
+    <div className={`nav-links ${open ? "open" : ""}`}><Link onClick={()=>setOpen(false)} href="/#cerita">Tentang</Link><Link onClick={()=>setOpen(false)} href="/#program">Program</Link><Link onClick={()=>setOpen(false)} href="/#berita">Jurnal</Link><Link onClick={()=>setOpen(false)} href="/#kontak">Kontak</Link><Link onClick={()=>setOpen(false)} className="nav-ppdb" href="/ppdb">PPDB 2026 <span>↗</span></Link></div>
+  </nav></header>;
+}
