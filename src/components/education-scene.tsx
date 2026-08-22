@@ -1,67 +1,23 @@
 "use client";
-/* eslint-disable react-hooks/immutability, react-hooks/refs -- R3F scene graph mutates refs each animation frame by design. */
-
+/* eslint-disable react-hooks/immutability, react-hooks/refs -- R3F scene graph mutates refs each frame. */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Line, Sparkles } from "@react-three/drei";
 import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { MotionValue } from "motion/react";
 import * as THREE from "three";
 
-class SceneBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-  static getDerivedStateFromError() { return { failed: true }; }
-  render() { return this.state.failed ? this.props.fallback : this.props.children; }
-}
-
-const clamp = (n: number) => THREE.MathUtils.clamp(n, 0, 1);
-const windowed = (p: number, center: number) => clamp(1 - Math.abs(p - center) / .34);
-
-function Orbit({ rotation, color, radius = 2 }: { rotation: [number, number, number]; color: string; radius?: number }) {
-  const points = useMemo(() => Array.from({ length: 49 }, (_, i) => {
-    const a = i / 48 * Math.PI * 2;
-    return new THREE.Vector3(Math.cos(a) * radius, Math.sin(a) * radius * .42, 0);
-  }), [radius]);
-  return <group rotation={rotation}><Line points={points} color={color} lineWidth={1} transparent opacity={.7}/><mesh position={[radius, 0, 0]}><sphereGeometry args={[.08, 10, 10]}/><meshStandardMaterial color={color} emissive={color}/></mesh></group>;
-}
-
-function Atom() {
-  return <group><mesh><icosahedronGeometry args={[1.08, 2]}/><meshPhysicalMaterial color="#0b716b" metalness={.35} roughness={.18} clearcoat={1}/></mesh><mesh scale={1.06}><icosahedronGeometry args={[1.08, 1]}/><meshBasicMaterial color="#c9f24b" wireframe transparent opacity={.3}/></mesh><Orbit rotation={[1.1, 0, .2]} color="#c9f24b"/><Orbit rotation={[-.4, .8, 1.5]} color="#d8a93d" radius={2.15}/><Orbit rotation={[.3, -.6, -1]} color="#62d5c8" radius={1.9}/></group>;
-}
-
-function Globe() {
-  return <group><mesh><sphereGeometry args={[1.62, 32, 24]}/><meshPhysicalMaterial color="#0a8178" metalness={.18} roughness={.3} clearcoat={.8}/></mesh><mesh scale={1.012}><sphereGeometry args={[1.62, 18, 12]}/><meshBasicMaterial color="#e9f2d4" wireframe transparent opacity={.35}/></mesh>{[-.85,-.35,.2,.75].map((y,i)=><mesh key={i} position={[0,y,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[Math.sqrt(Math.max(.1,2.62-y*y)),.012,6,48]}/><meshBasicMaterial color="#c9f24b" transparent opacity={.55}/></mesh>)}<mesh rotation={[0,0,.18]}><torusGeometry args={[2.05,.035,8,72]}/><meshStandardMaterial color="#d8a93d" metalness={.7}/></mesh></group>;
-}
-
-function Geometry() {
-  return <group><mesh rotation={[.25,.3,0]}><icosahedronGeometry args={[1.55,1]}/><meshPhysicalMaterial color="#d8a93d" metalness={.65} roughness={.2} clearcoat={.8}/></mesh><mesh scale={1.04}><icosahedronGeometry args={[1.55,1]}/><meshBasicMaterial color="#fff9df" wireframe transparent opacity={.7}/></mesh><mesh position={[-1.8,-.8,.1]} rotation={[.3,.3,.2]}><torusKnotGeometry args={[.52,.13,80,8,2,3]}/><meshStandardMaterial color="#c9f24b" emissive="#4b5917"/></mesh><mesh position={[1.75,.85,-.2]} rotation={[.2,.6,.4]}><octahedronGeometry args={[.65]}/><meshStandardMaterial color="#62d5c8" metalness={.5}/></mesh></group>;
-}
-
-function Journey({ progress, reduced }: { progress: MotionValue<number>; reduced: boolean }) {
-  const root = useRef<THREE.Group>(null);
-  const chapters = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)];
-  const { camera, scene } = useThree();
-  const bg = useMemo(() => new THREE.Color("#071b2f"), []);
-  useFrame((_, delta) => {
-    const p = reduced ? .08 : clamp(progress.get());
-    const damp = 1 - Math.exp(-delta * 5);
-    const centers = [.12,.5,.86];
-    chapters.forEach((ref,i) => { if (!ref.current) return; const v=windowed(p,centers[i]); ref.current.scale.lerp(new THREE.Vector3(.55+v*.55,.55+v*.55,.55+v*.55),damp); ref.current.position.x=THREE.MathUtils.lerp(ref.current.position.x,(i-(p<.33?0:p<.67?1:2))*5,damp); ref.current.rotation.y=THREE.MathUtils.lerp(ref.current.rotation.y,p*Math.PI*(1.2+i*.35),damp); });
-    if (root.current) { root.current.rotation.x=THREE.MathUtils.lerp(root.current.rotation.x,.05+p*.42,damp); root.current.rotation.z=THREE.MathUtils.lerp(root.current.rotation.z,-.08+p*.18,damp); }
-    const angle=-.18+p*.9;
-    camera.position.lerp(new THREE.Vector3(Math.sin(angle)*(5.5-p),1.25*p,Math.cos(angle)*(5.5-p)),damp);
-    camera.lookAt(0,p*.15,0);
-    bg.lerp(new THREE.Color(p<.34?"#071b2f":p<.68?"#063f46":"#172b31"),damp);
-    scene.background=bg;
-  });
-  return <><group ref={root}><group ref={chapters[0]}><Atom/></group><group ref={chapters[1]} position={[5,0,0]}><Globe/></group><group ref={chapters[2]} position={[10,0,0]}><Geometry/></group></group><ambientLight intensity={.65}/><hemisphereLight color="#ecffe8" groundColor="#020c17" intensity={1.4}/><directionalLight position={[4,6,5]} intensity={4} color="#fff3cc"/><pointLight position={[-4,-2,3]} intensity={25} color="#16b7aa" distance={10}/>{!reduced&&<Sparkles count={18} scale={[7,5,3]} size={1} speed={.12} color="#c9f24b" opacity={.22}/>}</>;
-}
-
-function canUseWebGL(){try{const c=document.createElement("canvas");return Boolean(c.getContext("webgl2")||c.getContext("webgl"));}catch{return false;}}
-export default function EducationScene({ progress }: { progress: MotionValue<number> }) {
-  const [webgl]=useState(()=>typeof document!=="undefined"&&canUseWebGL());
-  const [reduced,setReduced]=useState(()=>typeof window!=="undefined"&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  useEffect(()=>{const q=window.matchMedia("(prefers-reduced-motion: reduce)");const update=()=>setReduced(q.matches);q.addEventListener("change",update);return()=>q.removeEventListener("change",update);},[]);
-  const fallback=<div className="scene-fallback" aria-hidden="true"><span/><span/><i/></div>;
-  if(!webgl)return fallback;
-  return <SceneBoundary fallback={fallback}><Canvas className="education-canvas" dpr={[1,1.5]} camera={{position:[0,0,5.5],fov:43}} gl={{antialias:true,powerPreference:"high-performance"}} frameloop={reduced?"demand":"always"} aria-label="Perjalanan tiga dimensi jurusan IPA, IPS, dan Matematika"><Journey progress={progress} reduced={reduced}/></Canvas></SceneBoundary>;
-}
+class SceneBoundary extends Component<{children:ReactNode;fallback:ReactNode},{failed:boolean}>{state={failed:false};static getDerivedStateFromError(){return{failed:true}}render(){return this.state.failed?this.props.fallback:this.props.children}}
+const clamp=(n:number)=>THREE.MathUtils.clamp(n,0,1);
+const windowed=(p:number,c:number)=>clamp(1-Math.abs(p-c)/.34);
+const mat=(color:string)=><meshStandardMaterial color={color} metalness={.25} roughness={.28}/>;
+function Bond({a,b,color="#d8a93d"}:{a:[number,number,number];b:[number,number,number];color?:string}){const d=new THREE.Vector3(...b).sub(new THREE.Vector3(...a));const mid=new THREE.Vector3(...a).add(new THREE.Vector3(...b)).multiplyScalar(.5);const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());return <mesh position={mid} quaternion={q}><cylinderGeometry args={[.035,.035,d.length(),8]}/>{mat(color)}</mesh>}
+function Molecule({position=[-1.55,.55,0] as [number,number,number]}){const pts:[[number,number,number],[number,number,number],[number,number,number],[number,number,number]]=[[0,0,0],[.65,.4,.1],[-.55,.48,-.1],[-.15,-.65,.15]];return <group position={position}>{pts.slice(1).map((p,i)=><Bond key={i} a={pts[0]} b={p}/>) }{pts.map((p,i)=><mesh key={i} position={p}><sphereGeometry args={[i?.13:.2,16,12]}/>{mat(i?"#c9f24b":"#0b716b")}</mesh>)}</group>}
+function DNA(){const nodes=Array.from({length:13},(_,i)=>{const y=-1.25+i*.21,a=i*.72;return {y,a};});return <group position={[1.25,0,0]} rotation={[0,0,-.12]}>{nodes.map(({y,a},i)=>{const p1:[number,number,number]=[Math.cos(a)*.38,y,Math.sin(a)*.38],p2:[number,number,number]=[-Math.cos(a)*.38,y,-Math.sin(a)*.38];return <group key={i}><Bond a={p1} b={p2} color="#62d5c8"/><mesh position={p1}><sphereGeometry args={[.07,10,8]}/>{mat("#c9f24b")}</mesh><mesh position={p2}><sphereGeometry args={[.07,10,8]}/>{mat("#d8a93d")}</mesh>{i>0&&<><Bond a={[Math.cos((i-1)*.72)*.38,y-.21,Math.sin((i-1)*.72)*.38]} b={p1} color="#f3f1e9"/><Bond a={[-Math.cos((i-1)*.72)*.38,y-.21,-Math.sin((i-1)*.72)*.38]} b={p2} color="#f3f1e9"/></>}</group>})}</group>}
+function Flask(){return <group position={[-.1,-1.25,.25]}><mesh><cylinderGeometry args={[.16,.16,.65,16]}/>{mat("#e9f2d4")}</mesh><mesh position={[0,-.55,0]}><coneGeometry args={[.72,1.15,24]}/><meshPhysicalMaterial color="#62d5c8" transparent opacity={.72} roughness={.15}/></mesh><mesh position={[0,.35,0]}><torusGeometry args={[.2,.04,8,20]}/>{mat("#c9f24b")}</mesh></group>}
+function Science(){return <group><Molecule/><DNA/><Flask/></group>}
+function Globe(){return <group position={[-.3,.15,0]}><mesh><sphereGeometry args={[1.15,28,20]}/><meshPhysicalMaterial color="#0a8178" metalness={.18} roughness={.3}/></mesh><mesh scale={1.012}><sphereGeometry args={[1.15,14,10]}/><meshBasicMaterial color="#e9f2d4" wireframe transparent opacity={.3}/></mesh>{[-.4,.1,.55].map((y,i)=><mesh key={i} position={[0,y,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[Math.sqrt(Math.max(.1,1.3-y*y)),.012,6,40]}/>{mat("#c9f24b")}</mesh>)}</group>}
+function Social(){const arc=(z:number,s:number)=>Array.from({length:28},(_,i)=>{const t=i/27;return new THREE.Vector3(-1.1+t*2.2,.65+Math.sin(t*Math.PI)*s,z)});return <group><Globe/>{[.2,.45,.7].map((h,i)=><Line key={i} points={arc(.25+i*.08,h)} color={i===1?"#d8a93d":"#c9f24b"} lineWidth={1}/>) }<group position={[1.65,-1.15,0]}>{[.55,1,1.5,1.95].map((h,i)=><mesh key={i} position={[i*.28,h/2,0]}><boxGeometry args={[.2,h,.3]}/>{mat(i===3?"#d8a93d":"#62d5c8")}</mesh>)}</group></group>}
+function MathScene(){const curve=Array.from({length:60},(_,i)=>{const x=-1.5+i/59*3;return new THREE.Vector3(x,Math.sin(x*2)*.45,.2)});return <group><gridHelper args={[4,10,"#62d5c8","#16485a"]} position={[0,-1.25,0]} /><Line points={[[-2,0,0],[2,0,0]]} color="#f3f1e9"/><Line points={[[0,-1.5,0],[0,1.5,0]]} color="#f3f1e9"/><Line points={curve} color="#c9f24b" lineWidth={3}/><group position={[-1.25,.85,0]}><mesh><torusGeometry args={[.34,.065,12,40,Math.PI*1.8]}/>{mat("#d8a93d")}</mesh><mesh position={[.28,-.22,0]}><boxGeometry args={[.08,.52,.1]}/>{mat("#d8a93d")}</mesh></group><group position={[.05,.9,0]}><mesh rotation={[0,0,.35]}><boxGeometry args={[.08,1,.1]}/>{mat("#62d5c8")}</mesh><mesh position={[.18,.45,0]}><torusGeometry args={[.2,.05,10,24,Math.PI]}/>{mat("#62d5c8")}</mesh><mesh position={[-.18,-.45,0]} rotation={[0,0,Math.PI]}><torusGeometry args={[.2,.05,10,24,Math.PI]}/>{mat("#62d5c8")}</mesh></group><mesh position={[1.25,.75,-.1]} rotation={[.3,.5,.2]}><octahedronGeometry args={[.5]}/>{mat("#d8a93d")}</mesh><mesh position={[-1.35,-.75,.15]} rotation={[.2,.3,0]}><torusKnotGeometry args={[.28,.07,48,8,2,3]}/>{mat("#0b716b")}</mesh></group>}
+function Journey({progress,reduced}:{progress:MotionValue<number>;reduced:boolean}){const root=useRef<THREE.Group>(null);const chapters=[useRef<THREE.Group>(null),useRef<THREE.Group>(null),useRef<THREE.Group>(null)];const {camera,scene}=useThree();const bg=useMemo(()=>new THREE.Color("#071b2f"),[]);useFrame((_,delta)=>{const p=reduced?.08:clamp(progress.get()),d=1-Math.exp(-delta*5),centers=[.12,.5,.86];chapters.forEach((r,i)=>{if(!r.current)return;const v=windowed(p,centers[i]);r.current.scale.lerp(new THREE.Vector3(.68+v*.42,.68+v*.42,.68+v*.42),d);r.current.position.x=THREE.MathUtils.lerp(r.current.position.x,(i-(p<.33?0:p<.67?1:2))*5,d);r.current.rotation.y=THREE.MathUtils.lerp(r.current.rotation.y,p*.65+i*.12,d)});if(root.current)root.current.rotation.x=THREE.MathUtils.lerp(root.current.rotation.x,.04+p*.18,d);camera.position.lerp(new THREE.Vector3(Math.sin(-.15+p*.55)*5.5,.5+p*.5,Math.cos(-.15+p*.55)*5.5),d);camera.lookAt(0,0,0);bg.lerp(new THREE.Color(p<.34?"#071b2f":p<.68?"#063f46":"#172b31"),d);scene.background=bg});return <><group ref={root}><group ref={chapters[0]}><Science/></group><group ref={chapters[1]} position={[5,0,0]}><Social/></group><group ref={chapters[2]} position={[10,0,0]}><MathScene/></group></group><ambientLight intensity={.8}/><hemisphereLight color="#ecffe8" groundColor="#020c17" intensity={1.3}/><directionalLight position={[4,6,5]} intensity={4}/>{!reduced&&<Sparkles count={16} scale={[7,5,3]} size={1} speed={.1} color="#c9f24b" opacity={.2}/>}</>}
+function canUseWebGL(){try{const c=document.createElement("canvas");return Boolean(c.getContext("webgl2")||c.getContext("webgl"))}catch{return false}}
+export default function EducationScene({progress}:{progress:MotionValue<number>}){const [webgl]=useState(()=>typeof document!=="undefined"&&canUseWebGL());const [reduced,setReduced]=useState(()=>typeof window!=="undefined"&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);useEffect(()=>{const q=window.matchMedia("(prefers-reduced-motion: reduce)"),u=()=>setReduced(q.matches);q.addEventListener("change",u);return()=>q.removeEventListener("change",u)},[]);const fallback=<div className="scene-fallback" aria-hidden="true"><span/><span/><i/></div>;if(!webgl)return fallback;return <SceneBoundary fallback={fallback}><Canvas className="education-canvas" dpr={[1,1.5]} camera={{position:[0,0,5.5],fov:43}} gl={{antialias:true,powerPreference:"high-performance"}} frameloop={reduced?"demand":"always"}><Journey progress={progress} reduced={reduced}/></Canvas></SceneBoundary>}
