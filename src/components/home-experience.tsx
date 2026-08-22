@@ -93,6 +93,6 @@ export function HomeExperience() {
 
     <section className="testimonial section-pad"><div className="container testimonial-layout"><Quote size={64}/><Reveal><blockquote>“Di sini, anak kami tidak diminta menjadi sama dengan yang lain. Ia dibantu mengenali kekuatannya, berani bertanya, dan bertanggung jawab atas pilihannya.”</blockquote><p><strong>Rina Prameswari</strong><br/>Orang tua siswa kelas XI</p></Reveal><div className="testimonial-photo"/></div></section>
 
-    <section id="kontak" className="ppdb-cta"><div className="container cta-layout"><Reveal><span className="section-index light-index">PPDB 2026 / 2027</span><h2>Cakrawala berikutnya<br/>dimulai <em>di sini.</em></h2></Reveal><Reveal className="cta-side"><p>Pendaftaran gelombang pertama dibuka. Temukan lingkungan belajar yang tepat untuk langkah besar berikutnya.</p><Link className="button lime" href="/ppdb">Daftar PPDB sekarang <ArrowRight size={18}/></Link><span>Butuh bantuan? (022) 555-0188</span></Reveal></div></section>
+    <section id="kontak" className="ppdb-cta"><div className="container cta-layout"><Reveal><span className="section-index light-index">PPDB 2026 / 2027</span><h2>Cakrawala berikutnya<br/>dimulai <em>di sini.</em></h2></Reveal><Reveal className="cta-side"><p>Pendaftaran gelombang pertama dibuka. Temukan lingkungan belajar yang tepat untuk langkah besar berikutnya.</p><Link className="button lime" href="/ppdb">Daftar PPDB sekarang <ArrowRight size={18}/></Link><span>Butuh bantuan? (0761) 555-0188</span></Reveal></div></section>
   </main>;
 }
