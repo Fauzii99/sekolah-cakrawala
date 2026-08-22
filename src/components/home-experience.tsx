@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowDown, ArrowRight, FlaskConical, Globe2, Quote, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { news } from "@/lib/data";
+
+const EducationScene = dynamic(() => import("@/components/education-scene"), { ssr: false });
 
 export function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const reduced = useReducedMotion();
@@ -57,6 +60,7 @@ export function HomeExperience() {
     <section className="hero-editorial">
       <motion.div className="hero-image" style={{ y: heroImageY }} initial={false} animate={reduced ? {} : { scale: [1.02, 1.09] }} transition={{ duration: 18, ease: "linear", repeat: Infinity, repeatType: "reverse" }} />
       <div className="hero-shade" />
+      <div className="hero-scene"><EducationScene /></div>
       <div className="hero-grid container">
         <motion.div className="hero-copy" style={{ y: heroCopyY, opacity: heroCopyOpacity }} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: reduced ? 0 : .14, delayChildren: .2 } } }}>
           <motion.span className="hero-kicker" variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>SMA Cakrawala Nusantara · Pekanbaru</motion.span>
@@ -65,7 +69,7 @@ export function HomeExperience() {
           <motion.div className="hero-actions" variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}><Link className="button lime" href="/ppdb">Mulai perjalanan <ArrowRight size={18}/></Link><a className="text-link light" href="#cerita">Kenali Cakrawala</a></motion.div>
         </motion.div>
         <motion.aside className="hero-float-stat" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .9, duration: .8 }}><span>Jejak alumni</span><strong>98%</strong><p>diterima di perguruan tinggi pilihan</p></motion.aside>
-        <div className="hero-label">EST. 1998 <span/> 6°52&apos; S · 107°37&apos; E</div>
+        <div className="hero-label">EST. 1998 <span/> 0°32&apos; N · 101°27&apos; E</div>
         <a href="#cerita" className="scroll-cue"><span>Gulir untuk menjelajah</span><ArrowDown size={18}/></a>
       </div>
     </section>
@@ -82,12 +86,12 @@ export function HomeExperience() {
 
     <section id="program" className="programs section-pad"><div className="container">
       <Reveal className="section-heading"><span className="section-index">02 / JURUSAN</span><h2>Pilih arah belajar.<br/><em>Temukan masa depan.</em></h2></Reveal>
-      <div className="program-stack">{programs.map((p,i)=><Reveal key={p.title} className={`program-row row-${i}`}><motion.div className="program-image" whileHover={reduced?{}:{scale:1.025}} transition={{duration:.55}} style={{backgroundImage:`url('${p.image}')`}}/><div className="program-copy"><div className="program-meta"><span>{p.no}</span><p.icon size={22}/></div><h3>{p.title}</h3><p>{p.copy}</p><a href="#kontak" aria-label={`Pelajari ${p.title}`}><ArrowRight/></a></div></Reveal>)}</div>
+      <div className="program-stack depth-stage">{programs.map((p,i)=><Reveal key={p.title} className={`program-row depth-card row-${i}`}><motion.div className="program-image" whileHover={reduced?{}:{scale:1.025}} transition={{duration:.55}} style={{backgroundImage:`url('${p.image}')`}}/><div className="program-copy"><div className="program-meta"><span>{p.no}</span><p.icon size={22}/></div><h3>{p.title}</h3><p>{p.copy}</p><a href="#kontak" aria-label={`Pelajari ${p.title}`}><ArrowRight/></a></div></Reveal>)}</div>
     </div></section>
 
-    <section className="feature-story"><div className="feature-photo laboratory-photo"/><div className="feature-copy"><Reveal><span className="section-index light-index">CERITA DARI CAKRAWALA</span><p className="feature-quote">“Kami belajar bahwa ide kecil bisa punya dampak besar ketika dikerjakan bersama.”</p><p>Tim Arunika mengubah limbah kantin menjadi material bioplastik—proyek satu semester yang membawa mereka ke final kompetisi inovasi nasional.</p><Link className="button outline-light" href="/berita/pekan-proyek-siswa">Baca perjalanan mereka <ArrowRight size={18}/></Link></Reveal></div></section>
+    <section className="feature-story depth-feature"><div className="feature-photo laboratory-photo"/><div className="feature-copy"><Reveal><span className="section-index light-index">CERITA DARI CAKRAWALA</span><p className="feature-quote">“Kami belajar bahwa ide kecil bisa punya dampak besar ketika dikerjakan bersama.”</p><p>Tim Arunika mengubah limbah kantin menjadi material bioplastik—proyek satu semester yang membawa mereka ke final kompetisi inovasi nasional.</p><Link className="button outline-light" href="/berita/pekan-proyek-siswa">Baca perjalanan mereka <ArrowRight size={18}/></Link></Reveal></div></section>
 
-    <section className="facility-section section-pad"><div className="container facility-head"><Reveal><span className="section-index">03 / RUANG TUMBUH</span><h2>Kampus untuk <em>mencoba.</em></h2></Reveal><Reveal><p>Dirancang untuk fokus, kolaborasi, dan kemungkinan baru.</p></Reveal></div><div className="facility-track">{facilities.map((f,i)=><Reveal className="facility-card" key={f[0]}><div className="facility-img" style={{backgroundImage:`url('${f[2]}')`}}><span>0{i+1}</span></div><h3>{f[0]}</h3><p>{f[1]}</p></Reveal>)}</div></section>
+    <section className="facility-section section-pad depth-stage"><div className="container facility-head"><Reveal><span className="section-index">03 / RUANG TUMBUH</span><h2>Kampus untuk <em>mencoba.</em></h2></Reveal><Reveal><p>Dirancang untuk fokus, kolaborasi, dan kemungkinan baru.</p></Reveal></div><div className="facility-track">{facilities.map((f,i)=><Reveal className="facility-card depth-card" key={f[0]}><div className="facility-img" style={{backgroundImage:`url('${f[2]}')`}}><span>0{i+1}</span></div><h3>{f[0]}</h3><p>{f[1]}</p></Reveal>)}</div></section>
 
     <section id="berita" className="news section-pad"><div className="container"><Reveal className="news-head"><div><span className="section-index">04 / JURNAL SEKOLAH</span><h2>Yang sedang<br/><em>kami rayakan.</em></h2></div><a className="text-link" href="#berita">Lihat semua kabar <ArrowRight size={16}/></a></Reveal><div className="news-grid">{news.map((n,i)=><Reveal className={`news-item news-${i}`} key={n.slug}><Link href={`/berita/${n.slug}`}><div className="news-img" style={{backgroundImage:`url('${newsImages[i]}')`}}/><span>{n.date} · {i===0?"PRESTASI":i===1?"INOVASI":"AGENDA"}</span><h3>{n.title}</h3><p>{n.text}</p><ArrowRight/></Link></Reveal>)}</div></div></section>
 
