@@ -12,11 +12,7 @@ const EducationScene = dynamic(() => import("@/components/education-scene"), { s
 export function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, .45, 1], reduced ? [0, 0, 0] : [70, 0, -35]);
-  const rotateX = useTransform(scrollYProgress, [0, .45, 1], reduced ? [0, 0, 0] : [7, 0, -3]);
-  const scale = useTransform(scrollYProgress, [0, .45, 1], reduced ? [1, 1, 1] : [.96, 1, .985]);
-  return <motion.div ref={ref} className={`scroll-reveal ${className}`} style={{ y, rotateX, scale, transformPerspective: 1400 }} initial={reduced ? false : { filter: "blur(3px)" }} whileInView={{ filter: "blur(0px)" }} viewport={{ once: true, amount: .05 }} transition={{ duration: .5, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>;
+  return <motion.div ref={ref} className={`scroll-reveal ${className}`} initial={reduced ? false : { opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .08 }} transition={{ duration: .65, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>;
 }
 
 export function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
@@ -54,18 +50,23 @@ const facilities = [
 const newsImages = ["https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&w=1200&q=85", "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1000&q=85", "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=1000&q=85"];
 
 export function HomeExperience() {
+  const journeyRef = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress, scrollY } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: .25 });
   const heroCopyY = useTransform(scrollY, [0, 800], [0, reduced ? 0 : 150]);
   const heroCopyOpacity = useTransform(scrollY, [0, 620], [1, reduced ? 1 : .16]);
   const heroImageY = useTransform(scrollY, [0, 900], [0, reduced ? 0 : 120]);
+  const { scrollYProgress: journeyProgress } = useScroll({ target: journeyRef, offset: ["start start", "end end"] });
+  const chapterOne = useTransform(journeyProgress, [0,.25,.35], [1,1,0]);
+  const chapterTwo = useTransform(journeyProgress, [.25,.4,.58,.7], [0,1,1,0]);
+  const chapterThree = useTransform(journeyProgress, [.62,.76,1], [0,1,1]);
   return <main>
     <motion.div className="scroll-progress" style={{ scaleX: smoothProgress }} aria-hidden="true" />
     <section className="hero-editorial">
       <motion.div className="hero-image" style={{ y: heroImageY }} initial={false} animate={reduced ? {} : { scale: [1.02, 1.09] }} transition={{ duration: 18, ease: "linear", repeat: Infinity, repeatType: "reverse" }} />
       <div className="hero-shade" />
-      <div className="hero-scene"><EducationScene /></div>
+
       <div className="hero-grid container">
         <motion.div className="hero-copy" style={{ y: heroCopyY, opacity: heroCopyOpacity }} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: reduced ? 0 : .14, delayChildren: .2 } } }}>
           <motion.span className="hero-kicker" variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>SMA Cakrawala Nusantara · Pekanbaru</motion.span>
@@ -79,7 +80,16 @@ export function HomeExperience() {
       </div>
     </section>
 
-    <section id="cerita" className="intro section-pad"><div className="container intro-layout">
+    <section ref={journeyRef} id="cerita" className="immersive-journey"><div className="journey-sticky">
+      <div className="journey-canvas"><EducationScene progress={journeyProgress}/></div>
+      <div className="journey-top"><span>CAKRAWALA / BIDANG STUDI</span><span>GULIR · 01—03</span></div>
+      <motion.article className="journey-copy journey-left" style={{opacity:chapterOne}}><span>01 / IPA</span><h2>Menguji<br/><em>kemungkinan.</em></h2><p>Atom, materi, dan kehidupan dibaca melalui eksperimen.</p></motion.article>
+      <motion.article className="journey-copy journey-right" style={{opacity:chapterTwo}}><span>02 / IPS</span><h2>Memahami<br/><em>dunia.</em></h2><p>Masyarakat, ruang, dan waktu dipetakan dengan rasa ingin tahu.</p></motion.article>
+      <motion.article className="journey-copy journey-left" style={{opacity:chapterThree}}><span>03 / MATEMATIKA</span><h2>Merancang<br/><em>logika.</em></h2><p>Pola menjadi bahasa untuk keputusan yang akurat.</p></motion.article>
+      <div className="journey-progress"><motion.i style={{scaleX:journeyProgress}}/></div>
+    </div></section>
+
+    <section className="intro section-pad"><div className="container intro-layout">
       <Reveal><span className="section-index">01 / CAKRAWALA</span></Reveal>
       <Reveal delay={.1}><h2>Pendidikan terbaik tidak memberi semua jawaban. Ia menyalakan <em>rasa ingin tahu</em> yang bertahan seumur hidup.</h2></Reveal>
       <Reveal className="intro-note" delay={.2}><p>Sejak 1998, kami memadukan ketajaman akademik, integritas, dan pengalaman nyata. Setiap siswa dikenal, didengar, dan ditantang menemukan perannya.</p><a href="#program" className="text-link">Baca filosofi kami <ArrowRight size={16}/></a></Reveal>
