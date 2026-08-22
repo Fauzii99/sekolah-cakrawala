@@ -59,7 +59,7 @@ export function HomeExperience() {
       <div className="hero-shade" />
       <div className="hero-grid container">
         <motion.div className="hero-copy" style={{ y: heroCopyY, opacity: heroCopyOpacity }} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: reduced ? 0 : .14, delayChildren: .2 } } }}>
-          <motion.span className="hero-kicker" variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>SMA Cakrawala Nusantara · Bandung</motion.span>
+          <motion.span className="hero-kicker" variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>SMA Cakrawala Nusantara · Pekanbaru</motion.span>
           <motion.h1 variants={{ hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0 } }}>Berpikir luas.<br/><em>Berakar kuat.</em></motion.h1>
           <motion.p variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } }}>Ruang tumbuh bagi generasi yang ingin memahami dunia—lalu berani mengubahnya.</motion.p>
           <motion.div className="hero-actions" variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}><Link className="button lime" href="/ppdb">Mulai perjalanan <ArrowRight size={18}/></Link><a className="text-link light" href="#cerita">Kenali Cakrawala</a></motion.div>
