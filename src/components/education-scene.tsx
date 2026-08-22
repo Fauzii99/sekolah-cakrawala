@@ -26,9 +26,14 @@ function Sculpture({ reduced }: { reduced: boolean }) {
   const group = useRef<THREE.Group>(null);
   useFrame((state, delta) => {
     if (!group.current || reduced) return;
-    group.current.rotation.y += delta * .09;
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, state.pointer.y * .12, .035);
-    group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, -state.pointer.x * .08, .035);
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const progress = window.scrollY / maxScroll;
+    group.current.rotation.y += delta * .035;
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, progress * Math.PI * 3 + state.pointer.x * .12, .04);
+    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, progress * .8 + state.pointer.y * .12, .04);
+    group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, -state.pointer.x * .08 - progress * .25, .035);
+    group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, -progress * .8, .04);
+    group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, Math.sin(progress * Math.PI * 2) * .4, .04);
   });
   return <group ref={group} rotation={[.08, -.3, -.08]}>
     <Float speed={reduced ? 0 : 1.15} rotationIntensity={reduced ? 0 : .12} floatIntensity={reduced ? 0 : .2}>

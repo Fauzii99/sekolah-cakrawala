@@ -10,8 +10,13 @@ import { news } from "@/lib/data";
 const EducationScene = dynamic(() => import("@/components/education-scene"), { ssr: false });
 
 export function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
-  return <motion.div className={className} initial={reduced ? false : { y: 18, filter: "blur(3px)" }} whileInView={{ y: 0, filter: "blur(0px)" }} viewport={{ once: true, amount: .05 }} transition={{ duration: .5, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>;
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, .45, 1], reduced ? [0, 0, 0] : [70, 0, -35]);
+  const rotateX = useTransform(scrollYProgress, [0, .45, 1], reduced ? [0, 0, 0] : [7, 0, -3]);
+  const scale = useTransform(scrollYProgress, [0, .45, 1], reduced ? [1, 1, 1] : [.96, 1, .985]);
+  return <motion.div ref={ref} className={`scroll-reveal ${className}`} style={{ y, rotateX, scale, transformPerspective: 1400 }} initial={reduced ? false : { filter: "blur(3px)" }} whileInView={{ filter: "blur(0px)" }} viewport={{ once: true, amount: .05 }} transition={{ duration: .5, delay, ease: [.22, 1, .36, 1] }}>{children}</motion.div>;
 }
 
 export function Counter({ value, suffix = "" }: { value: number; suffix?: string }) {
